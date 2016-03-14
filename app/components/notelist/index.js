@@ -9,12 +9,25 @@ import ContentAdd from 'material-ui/lib/svg-icons/content/add';
 import IconButton from 'material-ui/lib/icon-button';
 import NavigationClose from 'material-ui/lib/svg-icons/navigation/close';
 import NoteListItem from '../NoteListItem';
+import IconMenu from 'material-ui/lib/menus/icon-menu';
+import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import Dialog from 'material-ui/lib/dialog';
 import Loading from '../loading';
+import FlatButton from 'material-ui/lib/flat-button';
+
 
 
 class NoteList extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      open_dialog: false,
+    };
+
+    this.handleToggleDialog = this.handleToggleDialog.bind(this);
+    let url = encodeURIComponent(window.location.href );
+    this.QRsrc = `http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=${url}&qzone=0&margin=0&size=300x300&ecc=L`;
   }
 
   componentWillMount() {
@@ -33,6 +46,12 @@ class NoteList extends React.Component {
     hashHistory.push('/addnote/' + this.props.params.id );
   }
 
+  handleToggleDialog() {
+    this.setState({'open_dialog': ! this.state.open_dialog });
+  }
+
+
+
   render() {
 
     let noteList = null;
@@ -45,11 +64,25 @@ class NoteList extends React.Component {
       noteList = _.map( this.props.notes, (value, key) => <NoteListItem key={key} {...value} />);
     }
 
+
+
     return (
       <div className="page">
         <AppBar title="Room name"
           className="header"
           iconElementLeft={<IconButton onClick={this.handleClose}><NavigationClose /></IconButton>}
+          iconElementRight={
+            <IconMenu
+              iconButtonElement={
+                <IconButton><MoreVertIcon /></IconButton>
+              }
+              targetOrigin={{horizontal: 'right', vertical: 'top'}}
+              anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+            >
+              <MenuItem primaryText="QR Code" onClick={ this.handleToggleDialog }/>
+              <MenuItem primaryText="Edit room"/>
+              <MenuItem primaryText="Delete room"/>
+            </IconMenu>}
           />
 
         <Loading />
@@ -59,7 +92,25 @@ class NoteList extends React.Component {
         <FloatingActionButton className="fab" onTouchTap={this.handleAddNote}>
           <ContentAdd />
         </FloatingActionButton>
-      </div>);
+
+        <Dialog
+            title="QR Code"
+            actions={<FlatButton
+              label="Cancel"
+              secondary={true}
+              onTouchTap={ this.handleToggleDialog }
+            />}
+            modal={false}
+            open={this.state.open_dialog}
+          >
+          <img src={this.QRsrc} style={{width:'100%'}}/>
+        </Dialog>
+      </div>
+
+
+
+    );
+
   }
 }
 
