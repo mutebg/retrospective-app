@@ -1,0 +1,11 @@
+- add 'remove listener' to all posible places
+- add auth from firebase
+- add QR code when user create room
+- order rooms by date desc
+- drag and drop notes
+- periods for rooms
+- service worker and offline use
+- install banner
+- icons and manifest
+- transitions between routes
+- set title ( room name ) on NoteList page 
